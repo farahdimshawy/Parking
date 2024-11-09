@@ -1,8 +1,10 @@
+package src;
+
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 import java.util.concurrent.Semaphore;
-import java.util.ArrayList;
-import java.util.List;
 
 public class ParkingLot {
     private static final int MAX_CAPACITY = 4; // Set the maximum capacity of the parking lot

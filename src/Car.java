@@ -1,4 +1,4 @@
-import java.util.concurrent.Semaphore;
+package src;
 
 public class Car extends Thread {
     private int gateNumber;

@@ -32,9 +32,9 @@ public class Car extends Thread {
                 System.out.println("invalid gate number");
                 return;
             }
-            while (currentTime < arrivalTime) {
-                Thread.sleep(1000); // sleep until the car arrived to the gate
-                currentTime++;
+            if (currentTime < arrivalTime) {
+                Thread.sleep((arrivalTime-currentTime)*1000); // sleep until the car arrived to the gate
+//                currentTime++;
             }
             ParkingLot.carArrived(gateNumber, carId, arrivalTime);
 

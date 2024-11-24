@@ -1,11 +1,48 @@
 package src;
 
-public class Car extends Thread {
-    private int gateNumber;
-    private int carId;
-    private int arrivalTime;
-    private int parkingDuration;
+
+public class Car extends Thread implements Comparable {
+    private final int gateNumber;
+    private final int carId;
+    private final int arrivalTime;
+    private final int parkingDuration;
     private static int currentTime = 0;
+    private static final Lot lot = new Lot();
+
+    public static synchronized void incrementTime() {
+        currentTime++;
+    }
+
+    public static synchronized void setTime(int time) {
+        currentTime = time;
+    }
+
+    public int getWaitingTime() {
+        if (currentTime == arrivalTime) {
+            return this.getCurrentTime() - this.getArrivalTime() + 1;
+        }
+        return this.getCurrentTime() - this.getArrivalTime();
+    }
+
+    public int getCarId() {
+        return carId;
+    }
+
+    public int getGateNumber() {
+        return gateNumber;
+    }
+
+    public int getArrivalTime() {
+        return arrivalTime;
+    }
+
+    public int getParkingDuration() {
+        return parkingDuration;
+    }
+
+    public int getCurrentTime() {
+        return currentTime;
+    }
 
     public Car(int gateNumber, int carId, int arrivalTime, int parkingDuration) {
         this.gateNumber = gateNumber;
@@ -26,6 +63,12 @@ public class Car extends Thread {
     }
 
     @Override
+    public int compareTo(Object o) {
+        Car car = (Car) o;
+        return Integer.compare(this.arrivalTime, car.arrivalTime);
+    }
+
+    @Override
     public void run() {
         try {
             if (gateNumber < 0 || gateNumber > 3) {
@@ -33,22 +76,21 @@ public class Car extends Thread {
                 return;
             }
             if (currentTime < arrivalTime) {
-                Thread.sleep((arrivalTime-currentTime)*1000); // sleep until the car arrived to the gate
-//                currentTime++;
+                Thread.sleep((arrivalTime - currentTime) * 1000L);
+                currentTime = arrivalTime;
             }
-            ParkingLot.carArrived(gateNumber, carId, arrivalTime);
+            Lot.carArrived(this);
 
             boolean parked = false;
             while (!parked) {
-                parked = ParkingLot.tryToPark(gateNumber, carId);
-                if (!parked) {
-                    Thread.sleep(1000); // Wait and try again if parking is full
+                parked = lot.park(this);
 
-                }
             }
+            // Car is now parked; simulate parking duration
+            Thread.sleep(parkingDuration * 1000L);
 
-            Thread.sleep(parkingDuration * 1000); // Simulate parking duration
-            ParkingLot.leaveSpot(gateNumber, carId, parkingDuration);
+            //setTime(currentTime + parkingDuration);
+            lot.carDeparted(this);
 
         } catch (InterruptedException e) {
             throw new RuntimeException(e);

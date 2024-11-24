@@ -1,22 +1,22 @@
 package src;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
 public class Main {
     public static void main(String[] args) {
         Parser parser = new Parser();
         List<Car> Cars = Parser.parseInput("src/input.txt");
+        ArrayList<Car> carsQueue = new ArrayList<>(Cars);
         ArrayList<Thread> carThreads = new ArrayList<>();
 
+        carsQueue.sort(Car::compareTo);
 
         // Loop through the list and print each element
-        for (Car c : Cars) {
+        for (Car c : carsQueue) {
             Car car = new Car(c);
             carThreads.add(car);
             car.start();
         }
-
 
         for (Thread car : carThreads) {
             try {
@@ -26,7 +26,7 @@ public class Main {
             }
         }
 
-        ParkingLot.printReport();
+        Lot.printReport();
     }
 }
 

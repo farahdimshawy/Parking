@@ -84,7 +84,6 @@ public class Car extends Thread implements Comparable {
             boolean parked = false;
             while (!parked) {
                 parked = lot.park(this);
-
             }
             // Car is now parked; simulate parking duration
             Thread.sleep(parkingDuration * 1000L);

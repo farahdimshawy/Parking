@@ -11,7 +11,7 @@ public class Lot {
         if (car1.getArrivalTime() != car2.getArrivalTime()) {
             return Integer.compare(car1.getArrivalTime(), car2.getArrivalTime());
         } else {
-            return Integer.compare(car1.getGateNumber(), car2.getGateNumber());
+            return Integer.compare(car1.getCarId(), car2.getCarId());
         }
     });
     static List<Car> carsParked = new ArrayList<>();
@@ -74,12 +74,11 @@ public class Lot {
 
                 return true;
             } else {
-                if (!carsWaiting.contains(car)) { // Check if the car is already in the waiting list
-                    carsWaiting.add(car); // Add only if not already waiting
-                    System.out.printf("Car %d from Gate %d waiting for a spot.%n", car.getCarId(), car.getGateNumber());
+                carsWaiting.add(car); // Add only if not already waiting
+                System.out.printf("Car %d from Gate %d waiting for a spot.%n", car.getCarId(), car.getGateNumber());
 
-                    while (occupiedSpots == 4) wait();
-                }
+                while (occupiedSpots == 4) wait();
+
                 return false;
             }
         }
@@ -88,9 +87,9 @@ public class Lot {
 
     public synchronized void carDeparted(Car car) {
         if (carsParked.contains(car)) { // Check if the car is actually parked
+            parkingSemaphore.release(); // Release a parking spot
             notifyAll();
             carsParked.remove(car);    // Remove the car from parked cars
-            parkingSemaphore.release(); // Release a parking spot
             occupiedSpots--;
             System.out.printf("Car %d from Gate %d left after %d units of time. (Parking Status: %d spots occupied)%n",
                     car.getCarId(), car.getGateNumber(), car.getParkingDuration(), occupiedSpots);

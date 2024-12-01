@@ -74,12 +74,12 @@ public class Lot {
 
                 return true;
             } else {
-                if (!carsWaiting.contains(car)) { // Check if the car is already in the waiting list
+                
                     carsWaiting.add(car); // Add only if not already waiting
                     System.out.printf("Car %d from Gate %d waiting for a spot.%n", car.getCarId(), car.getGateNumber());
 
                     while (occupiedSpots == 4) wait();
-                }
+                
                 return false;
             }
         }
